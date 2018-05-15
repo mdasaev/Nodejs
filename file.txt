@@ -1,0 +1,3 @@
+hello
+there is
+3 strings in file
