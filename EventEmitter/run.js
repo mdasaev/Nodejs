@@ -13,6 +13,13 @@ facebookChat.on('message', chatOnMessage);
 vkChat.on('message', chatOnMessage);
 
 
+// 3.1 Добавить код, который через 30 секунд
+//отписывает chatOnMessage от вебинара webinarChat.
+setTimeout( ()=> {
+  console.log('Закрываю вконтакте...');
+webinarChat.removeListener('message', chatOnMessage);
+}, 30000 );
+
 // Закрыть вконтакте
 setTimeout( ()=> {
   console.log('Закрываю вконтакте...');
