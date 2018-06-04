@@ -1,21 +1,60 @@
-const https = require('https');
-const url = 'https://netology-fbb-store-api.herokuapp.com/currency';
-function process(data) {
-  let curr = JSON.parse(data);
-  curr
-    .filter(item => item.CharCode === 'USD' || item.CharCode === 'EUR')
-    .forEach(item => console.log(item.Name, item.Value)); }
+//client part
 
-function handler(response) {
-  let data = '';
-  response.on('data', function (chunk) {
-    data += chunk;
-  });
-  response.on('end', function () {
-    process(data);
-  });
- }
- 
-const request = https.request(url);
-request.on('response', handler);
+const http = require('http');
+const querystring = require('querystring');
+
+let post_data = querystring.stringify({
+  'key':'trnsl.1.1.20160723T183155Z.f2a3339517e26a3c.d86d2dc91f2e374351379bb3fe371985273278df',
+  'text' : '',
+  'lang' : 'ru-en'
+});
+
+let options = {
+  hostname: 'https://translate.yandex.net/api/v1.5/tr.json/translate',
+  port: 443,
+  path: '/',
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/x-www-form-urlencoded',
+    'Content-Length': Buffer.byteLength(post_data)
+  }
+};
+
+
+
+
+//server part
+
+
+//const http = require('http');
+const port = 3000;
+
+function handler(req, res) {
+  let name = req.url.replace('/', '') || 'World';
+  console.log(req.method);
+  console.log(JSON.stringify(req.headers));
+
+  if (req.method == 'GET') {
+    res.writeHead(200, 'OK', {'Content-Type': 'text/html'});
+    res.write(`<form action="/">
+    Type a word: <input type="text" name="fname">
+    <input type="submit" value="Submit">
+    </form>`);
+    res.end();
+
+  }
+
+}
+
+//run
+const server = http.createServer();
+server.on('error', err => console.error(err));
+server.on('request', handler);
+server.on('listening', () => {
+  console.log('Start HTTP on port %d', port);
+});
+server.listen(port);
+
+let request = http.request(options);
+request.write(post_data);
 request.end();
