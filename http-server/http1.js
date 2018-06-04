@@ -28,7 +28,6 @@ let options = {
 
 //const http = require('http');
 const port = 3000;
-
 function handler(req, res) {
   let name = req.url.replace('/', '') || 'World';
   console.log(req.method);
@@ -36,13 +35,27 @@ function handler(req, res) {
 
   if (req.method == 'GET') {
     res.writeHead(200, 'OK', {'Content-Type': 'text/html'});
-    res.write(`<form action="/">
-    Type a word: <input type="text" name="fname">
-    <input type="submit" value="Submit">
+    res.write(`<form action="/" method="post" id="form1">
+    Type a word: <input type="text" name="word" id="word">
+    <input type="submit" value="Submit" onclick="submit_by_id">
     </form>`);
     res.end();
-
   }
+  else if (req.method == 'POST') {
+    let request = http.request(options);
+    request.write(post_data);
+    request.end();
+    console.log(post_data['word']);
+  }
+
+}
+
+function submit_by_id() {
+  document.getElementById("form1").submit(); //form submission
+  //alert("Form Id : " + document.getElementById("form_id").getAttribute("id") + " Form Submitted Successfully......");
+  post_data['word'] = document.getElementById("word").value;
+  console.log(post_data['word']);
+
 
 }
 
@@ -54,7 +67,3 @@ server.on('listening', () => {
   console.log('Start HTTP on port %d', port);
 });
 server.listen(port);
-
-let request = http.request(options);
-request.write(post_data);
-request.end();
